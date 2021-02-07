@@ -4,8 +4,8 @@
 
 # ros install
 cd ..
-git clone https://github.com/kowackie/ros_setup_script_Ubuntu20.04_server.git
-cd ros_setup_script_Ubuntu20.04_server
+git clone https://github.com/kowackie/ros_setup_scripts_Ubuntu20.04_server.git
+cd ros_setup_scripts_Ubuntu20.04_server
 bash ./step0.bash
 bash ./step1.bash
 
