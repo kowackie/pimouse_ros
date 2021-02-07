@@ -1,0 +1,5 @@
+sudo: required
+dist: focal
+
+scripts:
+  - bash -xve ./test/travis_ros_install.bash
