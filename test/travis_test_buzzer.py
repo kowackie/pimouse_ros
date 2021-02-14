@@ -17,7 +17,7 @@ class BuzzerTest(unittest.TestCase):
 
     def feedback_cb(self, feedback):
         with open('/dev/rtbuzzer0', 'r') as f:
-            data = readline()
+            data = f.readline()
             self.device_values.append(int(data.rstrip()))
 
     def test_node_exist(self):
