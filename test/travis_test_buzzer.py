@@ -7,8 +7,18 @@ import unittest
 import rostest
 import rosnode
 from std_msgs.msg import UInt16
+from pimouse_ros.msg import MusicAction, MusicResult, MusicFeedback, MusicGoal
 
 class BuzzerTest(unittest.TestCase):
+    def setUp(self):
+        self.client = actionlib.SimpleActionClient('music', MusicAction)
+        self.device_values = list()
+
+    def feedback_cb(self, feedback):
+        with open('/dev/rtbuzzer0', 'r') as f:
+            data = readline()
+            self.device_values.append(int(data.rstrip()))
+
     def test_node_exist(self):
         nodes = rosnode.get_node_names()
         self.assertIn('/buzzer', nodes, "node does not exist")
@@ -24,6 +34,24 @@ class BuzzerTest(unittest.TestCase):
                 data, "1234\n",
                 "value does not written to rtbuzzer0"
             )
+
+    def test_music(self):
+        goal = MusicGoal()
+        goal.freqs = [100, 200, 300]
+        goal.durations = [2, 2, 2]
+        self.client.wait_for_server()
+        self.client.send_goal(goal, feedback_cb=self.feedback_cb)
+        self.client.wait_for_result()
+        self.assertTrue(self.client.get_result(), "invalid result")
+        self.assertEqual(
+            goal.freqs, self.device_values,
+            f"invalid feedback: {','.join([str(v) for v in self.device_values])}"
+        )
+        self.device_values.clear()
+        self.client.send_goal(goal, feedback_cb=self.feedback_cb)
+        self.client.wait_for_result(rospy.Duration.from_sec(0.5))
+        self.assertFalse(self.client.get_result(), "stop is requested but return true")
+        self.assertFalse(goal.freqs == self.device_values, "not stopped")
 
 if __name__ == '__main__':
     time.sleep(3)
