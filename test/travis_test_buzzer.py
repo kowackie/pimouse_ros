@@ -6,6 +6,7 @@ import rospy
 import unittest
 import rostest
 import rosnode
+import actionlib
 from std_msgs.msg import UInt16
 from pimouse_ros.msg import MusicAction, MusicResult, MusicFeedback, MusicGoal
 
