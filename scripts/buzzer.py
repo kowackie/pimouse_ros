@@ -22,15 +22,15 @@ def exec_music(goal):
     length = min(len(goal.freqs), len(goal.durations))
     freqs = goal.freqs[:length]
     durations = goal.durations[:length]
-    for i, (freq, duration) in enumerate(zip(freqs, durations)):
-        fb.remaining_steps = len(goal.freqs) - i
-        music.publish_feedback(fb)
+    for i, (freq, duration) in enumerate(zip(freqs, durations), start=1):
         if music.is_preempt_requested():
             write_freq(0)
             r.finished = False
             music.set_preempted(r)
             return
         write_freq(freq)
+        fb.remaining_steps = len(freqs) - i
+        music.publish_feedback(fb)
         rospy.sleep(duration)
     write_freq(0)
     r.finished = True
